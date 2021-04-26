@@ -1,5 +1,8 @@
+from dataset import *
+
 float_formatter = "{:.2E}".format
 np.set_printoptions(formatter={'float_kind':float_formatter})
+from datetime import datetime
 
 def normalize(a):
     col_sums = a.sum(axis=0)
@@ -7,17 +10,22 @@ def normalize(a):
     return new_matrix
 
 class Shaman():
-    def __init__(self, dataset):
+    def __init__(self, dataset, standardize = True):
         self.p = dataset.p
         self.dataset = dataset
         self.thetas = np.zeros([self.p + 1], dtype = float)
         self.old_thetas = self.thetas
         self.lr = 1.0
         self.lr_decay = 1.0 / 2
-        self.mininal_improvement = 0.1
-        self.newcost = 0.0
         self.oldcost = 0.0
+        self.c = 1.0 / 2
+        self.lr_increase = 1.5
+        self.start_time = None
+        self.time_limit = 2
+        self.standardize = standardize
 
+    def time_stop(self):
+        return ((datetime.now() - self.start_time).seconds >= 2)
 
     def predict(self, data, thetas = None):
         if thetas is None:
@@ -42,14 +50,31 @@ class Shaman():
 
     def compute_gradients(self):
         error = self.error()
-        gradients = np.dot(error, normalize(self.dataset.x))
+        gradients = np.dot(error, self.dataset.x)
         gradients = gradients / len(self.dataset.y)
+        # gradients = gradients        
         return (gradients)
 
 
+    def ajimo_goldstein_condition(self, l2_grad_squared, gradients, lr):
+        thetas = self.thetas - lr * gradients
+        cost = self.mean_squared_error(thetas)
+        objective = self.newcost - (self.c * lr * l2_grad_squared)
+        return (cost <= objective)
+
+
+    def ajimo(self, gradients):
+        l2_grad_squared = np.square(gradients).sum()
+        lr = self.lr * self.lr_increase
+        while (not self.ajimo_goldstein_condition(l2_grad_squared, gradients, lr)):
+            lr = lr * self.lr_decay
+        self.lr = lr
+
     def update_thetas(self):
         self.old_thetas = self.thetas
-        self.thetas = self.thetas - (self.lr * self.compute_gradients())
+        gradients = self.compute_gradients()
+        self.ajimo(gradients)
+        self.thetas = self.thetas - (self.lr * gradients)
 
     
     def update_costs(self):
@@ -65,33 +90,36 @@ class Shaman():
 
 
     def training_loop(self):
-        keep_learning = True
+        self.start_time = datetime.now()
         self.newcost = self.mean_squared_error()
-        while (keep_learning):
+        while (not self.time_stop()):
             tmpold = self.oldcost
             self.update_thetas()
             tmpold = self.update_costs()
             if (self.newcost > self.oldcost):
+                print("lol")
                 self.lr = self.lr * self.lr_decay
                 self.thetas = self.old_thetas
                 self.undo_update_costs(tmpold)
-            keep_learning = not self.should_i_stop()
-            print(self)
 
 
     def middle_error(self):
         middle_thetas = (self.thetas + self.old_thetas) / 2
         return self.mean_squared_error(middle_thetas)
 
-    
-    def should_i_stop(self):
-        if abs(self.oldcost - self.newcost) > self.mininal_improvement:
-            return False
-        if abs(self.middle_error() - self.newcost) > self.mininal_improvement:
-            return False
-        return True
 
+    def unstandardize_thetas(self):
+        self.thetas[1:] = self.thetas[1:] / self.dataset.x_scaler.scale_
+        self.thetas[0] = self.thetas[0] - np.dot(self.thetas[1:], self.dataset.x_scaler.mean_)
+        self.thetas = self.thetas * self.dataset.y_scaler.scale_
+        self.thetas[0] += self.dataset.y_scaler.mean_
+
+    def write_thetas_to_file(self, filename="thetas.csv"):
+        if self.standardize:
+            self.unstandardize_thetas()
+        with open(filename, "w+") as file:
+            file.write(",".join([str(x) for x in self.thetas]))
 
 
     def __str__(self):
-        return (f"Cost: {self.newcost:.2e}, Thetas: {self.thetas}, LR {self.lr:4.2E}")
+        return (f"Cost: {self.newcost}, Thetas: {self.thetas}, LR {self.lr:4.2E}")
