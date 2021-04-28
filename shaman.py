@@ -1,4 +1,5 @@
 from dataset import *
+from graphs import *
 
 float_formatter = "{:.2E}".format
 np.set_printoptions(formatter={'float_kind':float_formatter})
@@ -10,22 +11,25 @@ def normalize(a):
     return new_matrix
 
 class Shaman():
-    def __init__(self, dataset, standardize = True):
+    def __init__(self, dataset, standardize = True, plot = False, time_limit = 2):
         self.p = dataset.p
         self.dataset = dataset
         self.thetas = np.zeros([self.p + 1], dtype = float)
         self.old_thetas = self.thetas
-        self.lr = 1.0
+        self.lr = 0.1
         self.lr_decay = 1.0 / 2
         self.oldcost = 0.0
         self.c = 1.0 / 2
-        self.lr_increase = 1.5
+        self.lr_increase = 2
         self.start_time = None
-        self.time_limit = 2
+        self.time_limit = time_limit
         self.standardize = standardize
+        self.plot = plot
+        if (self.plot):
+            self.graph = Graph(self)
 
     def time_stop(self):
-        return ((datetime.now() - self.start_time).seconds >= 2)
+        return ((datetime.now() - self.start_time).seconds >= self.time_limit)
 
     def predict(self, data, thetas = None):
         if thetas is None:
@@ -92,15 +96,32 @@ class Shaman():
     def training_loop(self):
         self.start_time = datetime.now()
         self.newcost = self.mean_squared_error()
+        i = 0
+        if (self.plot):
+            try:
+                self.graph.update_linear_graph(self.thetas[0], self.thetas[1])
+                self.graph.update_mse_graph(self.newcost, i)
+                i += 1
+            except:
+                self.plot = False
         while (not self.time_stop()):
             tmpold = self.oldcost
             self.update_thetas()
             tmpold = self.update_costs()
+            print(self)
             if (self.newcost > self.oldcost):
                 print("lol")
                 self.lr = self.lr * self.lr_decay
                 self.thetas = self.old_thetas
                 self.undo_update_costs(tmpold)
+            else:
+                if (self.plot):
+                    try:
+                        self.graph.update_linear_graph(self.thetas[0], self.thetas[1])
+                        self.graph.update_mse_graph(self.newcost, i)
+                        i += 1
+                    except:
+                        self.plot = False
 
 
     def middle_error(self):
