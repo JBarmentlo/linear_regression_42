@@ -29,7 +29,7 @@ def read_thetas(self, path = 'thetas.csv'):
 
 if __name__  == "__main__":
     parser = argparse.ArgumentParser(description='A typical linear regression')
-    parser.add_argument("x", nargs='+', type=float)
+    parser.add_argument("x", nargs=1, type=float)
     parser.add_argument("thetas_path", nargs='?', default="thetas.csv")
     args = parser.parse_args()
     shaman = BabyShaman(args.thetas_path)

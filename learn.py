@@ -14,7 +14,6 @@ if __name__  == "__main__":
     parser.add_argument("--no_standardize", help='do not standardize training data', action='store_false')
     parser.add_argument("--plot", help="plot curves while training", action="store_true")
     args = parser.parse_args()
-    print(args.no_standardize)
     d = Dataset(args.data_path, standardize = args.no_standardize)
     shaman = Shaman(d, standardize = args.no_standardize, plot = args.plot, time_limit = args.time)
     shaman.training_loop()

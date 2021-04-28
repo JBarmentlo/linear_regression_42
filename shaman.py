@@ -108,9 +108,7 @@ class Shaman():
             tmpold = self.oldcost
             self.update_thetas()
             tmpold = self.update_costs()
-            print(self)
             if (self.newcost > self.oldcost):
-                print("lol")
                 self.lr = self.lr * self.lr_decay
                 self.thetas = self.old_thetas
                 self.undo_update_costs(tmpold)
