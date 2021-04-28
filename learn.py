@@ -20,4 +20,5 @@ if __name__  == "__main__":
     shaman.training_loop()
     shaman.write_thetas_to_file()
     shaman.dataset.destandardize()
-    shaman.graph.plot_final_result(shaman)
+    if args.plot:
+        shaman.graph.plot_final_result(shaman)
