@@ -1,7 +1,9 @@
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import time
-
+import tkinter
+matplotlib.use('TkAgg')
 
 
 class Graph():
