@@ -3,3 +3,6 @@ __pycache__/**
 .env
 linear-env/**
 linear-env
+*.ipynb*/*
+*.ipynb
+.vscode/*

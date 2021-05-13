@@ -35,9 +35,9 @@ class Dataset():
     def destandardize(self):
         if (not self.standardized):
             return
-        self.x[:,1:] = self.x_scaler.inverse_transform(self.x[:,1:])
+        # self.x[:,1:] = self.x_scaler.inverse_transform(self.x[:,1:])
         self.y = self.y_scaler.inverse_transform(self.y[:, np.newaxis])
-        self.y = np.reshape(self.y, self.y.shape[0])
+        # self.y = np.reshape(self.y, self.y.shape[0])
 
 
     def standardize(self):
@@ -49,7 +49,7 @@ class Dataset():
         self.y_scaler.fit(self.y)
         self.x = self.x_scaler.transform(self.x)
         self.y = self.y_scaler.transform(self.y)
-        self.y = np.reshape(self.y, self.y.shape[0])
+        # self.y = np.reshape(self.y, self.y.shape[0])
 
 
     def read_csv(self, path):
