@@ -1,9 +1,12 @@
 import matplotlib
-matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 import time
 
+try:
+    matplotlib.use('TkAgg')
+except:
+    print("There was an error setting tkinter as display. Make sure it is installed on you machine. You will experience errors, do not use --plot")
 
 
 class Graph():
@@ -40,7 +43,7 @@ class Graph():
 
     def init_mse_graph(self):
         fig = plt.figure(2)
-        plt.title("Middle squared error (MSE)")
+        plt.title("Mean squared error (MSE)")
         plt.xlabel("Episode (nb of training iterations)")
         plt.ylabel("MSE")
         self.mse_x, self.mse_y = [], []
