@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 import time
@@ -33,7 +35,7 @@ class Graph():
         self.linear_x = np.linspace(kms.min(), kms.max())
         plt.legend()
         plt.grid(True)
-        plt.pause(2)
+        plt.pause(1)
     
 
     def init_mse_graph(self):
@@ -42,7 +44,7 @@ class Graph():
         plt.xlabel("Episode (nb of training iterations)")
         plt.ylabel("MSE")
         self.mse_x, self.mse_y = [], []
-        plt.pause(0.001)
+        plt.pause(1)
     
 
     def remove_plot(self, a_plot):
@@ -57,7 +59,7 @@ class Graph():
         self.linear_y = theta0 + (theta1 * self.linear_x)
         self.linear_line = plt.plot(self.linear_x, self.linear_y, color="blue", label="predict function")
         plt.legend()
-        plt.pause(0.001)
+        plt.pause(0.1)
     
 
     def update_mse_graph(self, cost, episode):
@@ -66,7 +68,7 @@ class Graph():
         self.mse_x.append(episode)
         self.mse_y.append(cost)
         self.mse_curve = plt.plot(self.mse_x, self.mse_y, color="orange")
-        plt.pause(0.001)
+        plt.pause(0.1)
     
     
     def plot_final_result(self, irma):
