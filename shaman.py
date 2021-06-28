@@ -1,10 +1,9 @@
 from dataset import *
 from graphs import *
-from datetime import datetime
-
 
 float_formatter = "{:.2E}".format
 np.set_printoptions(formatter={'float_kind':float_formatter})
+from datetime import datetime
 
 def normalize(a):
     col_sums = a.sum(axis=0)
@@ -22,7 +21,7 @@ class Shaman():
         self.oldcost = 0.0
         self.c = 1.0 / 2
         self.lr_increase = 2
-        self.start_time = datetime.now()
+        self.start_time = None
         self.time_limit = time_limit
         self.standardize = standardize
         self.plot = plot
@@ -57,10 +56,8 @@ class Shaman():
         error = self.error()
         gradients = np.dot(error, self.dataset.x)
         gradients = gradients / len(self.dataset.y)
-        # print(np.mean(gradients, axis=0))
-        # print(self.thetas)
-        # gradients = gradients
-        return (np.mean(gradients, axis=0))
+        # gradients = gradients        
+        return (gradients)
 
 
     def ajimo_goldstein_condition(self, l2_grad_squared, gradients, lr):
@@ -80,7 +77,7 @@ class Shaman():
     def update_thetas(self):
         self.old_thetas = self.thetas
         gradients = self.compute_gradients()
-        # self.ajimo(gradients)
+        self.ajimo(gradients)
         self.thetas = self.thetas - (self.lr * gradients)
 
     
@@ -111,7 +108,7 @@ class Shaman():
             tmpold = self.oldcost
             self.update_thetas()
             tmpold = self.update_costs()
-            print(self.newcost)
+            print(self)
             if (self.newcost > self.oldcost):
                 self.lr = self.lr * self.lr_decay
                 self.thetas = self.old_thetas
@@ -142,7 +139,6 @@ class Shaman():
             self.unstandardize_thetas()
         with open(filename, "w+") as file:
             file.write(",".join([str(x) for x in self.thetas]))
-        # np.savetxt("thetas.csv", self.thetas, delimiter=",")
 
 
     def __str__(self):

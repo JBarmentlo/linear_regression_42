@@ -29,13 +29,11 @@ def read_thetas(self, path = 'thetas.csv'):
 
 if __name__  == "__main__":
     parser = argparse.ArgumentParser(description='A typical linear regression')
-    parser.add_argument("thetas_path", nargs='?', default="thetas.csv")
-    args = parser.parse_args()
-    shaman = BabyShaman(args.thetas_path)
+    shaman = BabyShaman("thetas.csv")
     x = input("enter the km's of the car\n")
     x = [int(x)]
     if (len(x) + 1 != len(shaman.thetas)):
         print("Your thetas and your input are of incompatible shape.")
         raise ValueError
     x = np.concatenate(([1], x))
-    print(shaman.predict(x))
+    print("The predicted price is: ", shaman.predict(x))
