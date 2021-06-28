@@ -20,9 +20,14 @@ pip install -r requirements.txt
 sudo apt-get install python3-tk
 ```
 
-## I. Training
-Run ```python learn.py``` to train the model on the dataset that is given by the subject and stored in ```../datasets/data.csv```.
+## I. Visualise Data
+Run ```python plot_data.py``` to visualise the dataset.
 
+## II. Training
+Run ```python learn.py``` to train the model on the dataset that is given by the subject and stored in ```../datasets/data.csv```.
 
 ## III. Predicting
 Run ```python3 predictor.py``` to make one prediction.
+
+## IIII. Evaluate
+Run ```python3 evaluate.py``` to evaluate the regression on the given dataset.
