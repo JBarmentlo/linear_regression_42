@@ -1,12 +1,6 @@
 from shaman import *
 import argparse
 
-def to_bool(text):
-    if (text == "True" or text ==  "true"):
-        return True
-    return False
-
-
 if __name__  == "__main__":
     parser = argparse.ArgumentParser(description='A typical linear regression')
     parser.add_argument("data_path", nargs='?', default="data/data.csv")
