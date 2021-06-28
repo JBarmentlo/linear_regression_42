@@ -34,6 +34,6 @@ if __name__  == "__main__":
         y = shaman.predict(d.x)
         error = np.abs(d.y - y)
         relative_error = error / d.y
-        print(f"The average absolute error is {np.mean(error)}.\nThe average relative error is {np.mean(relative_error) * 100}%.")
+        print(f"The average absolute error is {np.mean(error):.1f}.\nThe average relative error is {np.mean(relative_error) * 100:.2f}%.")
     except:
         print("This program was written to help understand the importance and impact of different settings, not be a robust implementation, use with caution and with the subject dataset.")
